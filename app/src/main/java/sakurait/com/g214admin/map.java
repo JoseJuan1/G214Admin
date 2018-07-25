@@ -29,7 +29,7 @@ public class map extends AppCompatActivity {
     private MapView map;
     private MapController mapC;
     Marker marker;
-    ArrayList<OverlayItem> puntos;
+    //ArrayList<OverlayItem> puntos;
     MyLocationNewOverlay myLocationoverlay;
 
     Geocoder geocoder;
