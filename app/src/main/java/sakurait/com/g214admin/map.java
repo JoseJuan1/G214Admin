@@ -1,5 +1,7 @@
 package sakurait.com.g214admin;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
@@ -28,6 +30,9 @@ import java.util.Locale;
 public class map extends AppCompatActivity {
     private MapView map;
     private MapController mapC;
+
+
+
     Marker marker;
 
     MyLocationNewOverlay myLocationoverlay;
@@ -45,26 +50,49 @@ public class map extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_map );
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById( R.id.fab );
-        fab.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make( view, "Replace with your own action", Snackbar.LENGTH_LONG ).setAction( "Action", null ).show();
-                Toast.makeText( getApplicationContext(),"Enviar datos por intente a otra pantalla\n LAT: "+lat+"\n LON: "+lng,Toast.LENGTH_SHORT ).show();
-            }
-        } );
 
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById( R.id.fab2 );
-        fab2.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if (CheckOnline()){
+            FloatingActionButton fab = (FloatingActionButton) findViewById( R.id.fab );
+            fab.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                 //Snackbar.make( view, "Replace with your own action", Snackbar.LENGTH_LONG ).setAction( "Action", null ).show();
-                //recreate();
-                CreateMap();
-            }
-        } );
+                    Toast.makeText( getApplicationContext(),"Enviar datos por intente a otra pantalla\n LAT: "+lat+"\n LON: "+lng,Toast.LENGTH_SHORT ).show();
+                }
+            } );
 
-        CreateMap();
+            FloatingActionButton fab2 = (FloatingActionButton) findViewById( R.id.fab2 );
+            fab2.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Snackbar.make( view, "Replace with your own action", Snackbar.LENGTH_LONG ).setAction( "Action", null ).show();
+                    //recreate();
+                    CreateMap();
+                }
+            } );
+
+            CreateMap();
+        }else{
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("Lo siento! Verifique su conexión a internet.")
+                    .setTitle("ERROR")
+                    .setCancelable( false )
+                    .setNegativeButton( "Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    } );
+
+            // 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+
 
     }
 
@@ -187,6 +215,20 @@ public class map extends AppCompatActivity {
         Estado=Estado;
         Municipio=Municipio;
         Localidad=Localidad;
+    }
+
+    public Boolean CheckOnline() {
+        try {
+            Process p = Runtime.getRuntime().exec("ping -c 1 www.google.es");
+            int val           = p.waitFor();
+            boolean reachable = (val == 0);
+            return reachable;
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
